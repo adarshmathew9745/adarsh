@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="portal_my_home_menu_reenrollement_request_form" name="Portal layout : Reenrollement Request Form"
+                  inherit_id="openeducat_core_enterprise.portal_breadcrumbs_inhetrite" priority="9">
+            <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+                <li t-if="page_name == 'reenrollment_request_form' or reenrollment_request_form "
+                    t-attf-class="breadcrumb-item #{'active ' if not service_request_form else ''}">
+                    <a t-attf-href="/my/reenrollment">
+                        Reenrollement Request List
+                    </a>
+                </li>
+                <li t-if="student_id and page_name == 'reenrollment_request_form'" class="breadcrumb-item active">
+                    Reenrollement Request Form
+                </li>
+            </xpath>
+        </template>
+        <template id="all_reenrollement_request" name="All Reenrollement Request">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Reenrollement Request</t>
+                </t>
+                <div class="mt16 mb16 text-left portal_buttons">
+                    <div>
+                        <t t-if="not user_id.sudo().is_parent">
+                            <a t-attf-href="/my/reenrollment_request/reenrollment_request-form">
+                                <button>Reenrollement Request</button>
+                            </a>
+                        </t>
+                        <t t-else="">
+                            <a t-if="gms_student_id"
+                               t-attf-href="/my/reenrollment_request/reenrollment_request-form">
+                                <button>Reenrollement Request</button>
+                            </a>
+                        </t>
+                    </div>
+                </div>
+                <t t-if="not subject_registration_ids">
+                    <div class="alert alert-warning mt8" role="alert">
+                        There are no Reenrollement Request
+                    </div>
+                </t>
+                <t t-if="grouped_tasks">
+                    <t t-if="subject_registration_ids" t-call="portal.portal_table">
+                        <t t-foreach="grouped_tasks" t-as="tasks">
+                            <thead>
+                                <tr class="active" t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                    <t t-if="groupby == 'none'">
+                                        <th>#</th>
+                                    </t>
+
+                                    <th>Name</th>
+                                    <th>Student</th>
+                                    <th>Student No</th>
+                                    <th>Academic Year</th>
+                                    <th>Academic Semester</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-if="tasks" t-foreach="tasks"
+                                   t-as="task">
+                                    <tr>
+                                        <td>
+                                            <a
+                                                    t-attf-href="/my/reenrollement/request/selected/form/#{task.id}">
+                                                <span id="name" t-esc="task.name"/>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span t-esc="task.student_id.name"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="task.student_no"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="task.academic_year.name"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="task.semester_id.name"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="task.state"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </t>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <template id="reenrollement_request_form" name="reenrollement request form">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Reenrollement Request Registration Form</t>
+                </t>
+                <t t-if="not student_id">
+                    <p>There are currently no information for your account!!!</p>
+                </t>
+
+                <div t-if="student_id" style="background-color:white; padding: 20px 40px 20px 40px;"
+                     class="js_get_data">
+                    <div class="mt32">
+                        <form action="/reenrollement/submit" method="post" role="form"
+                              enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="row col-md-12">
+                                <div class="row col-md-6">
+                                    <input type="hidden" name="student_id" t-attf-class="form-control"
+                                           t-att-value="student_id.id"/>
+                                    <div class="col-md-4 mt8">
+                                        <lable>Name:</lable>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" name="name" t-attf-class="form-control"/>
+                                    </div>
+                                    <div class="col-md-4 mt16">
+                                        <lable>Date:</lable>
+                                    </div>
+                                    <div class="col-md-8 mt8" id="batch_on_courses">
+                                        <input readonly="1" id="datePicker" type="date" name="date" t-attf-class="form-control"/>
+                                    </div>
+                                    <script>
+                                       document.getElementById('datePicker').valueAsDate = new Date();
+                                    </script>
+                                </div>
+                                <div class="row col-md-6">
+                                    <div class="col-md-6 mt8">
+                                        <lable>Student:</lable>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input type="text" name="student" t-attf-class="form-control"
+                                               t-att-value="student_id.name" readonly="readonly"/>
+                                    </div>
+                                    <div class="col-md-6 mt16">
+                                        <lable>Academic Year:</lable>
+                                    </div>
+                                    <div class="col-md-6 mt8">
+                                        <select class="form-control custom batches" id="batch_on_year"
+                                                name="academic_year" onchange="onchange_academic_term_year()"
+                                                required="1">
+                                            <option value="">Select Year</option>
+                                            <t t-foreach="year" t-as="y">
+                                                <option t-esc='y.name' t-att-value='y.id'/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row col-md-12">
+                                <div class="row col-md-6">
+                                    <input type="hidden" name="student_id" t-attf-class="form-control"
+                                           t-att-value="student_id.id"/>
+                                    <div class="col-md-4 mt8">
+                                        <lable>Student No:</lable>
+                                    </div>
+                                    <div class="col-md-8 mt8" id="batch_on_courses">
+                                        <input type="text" name="student_no" t-attf-class="form-control"
+                                               t-att-value="student_id.student_number" readonly="readonly"/>
+                                    </div>
+                                </div>
+                                <div class="row col-md-6">
+                                    <div class="col-md-6 mt16">
+                                        <lable>Academic Semester:</lable>
+                                    </div>
+                                    <div class="col-md-6 mt8" id="batch_on_courses">
+                                        <select class="form-control custom batches" id="batch_on_semester"
+                                                name="semester"
+                                                required="1">
+                                            <option value="">Select Semester</option>
+                                            <t t-foreach="semester" t-as="s">
+                                                <option t-esc='s.name' t-att-value='s.id'/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt32"/>
+                            <div class="clearfix mb16 mt16 row col-md-12">
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-primary">
+                                        SUBMIT
+                                        <span class="fa fa-long-arrow-right"/>
+                                    </button>
+                                </div>
+                                <script>
+                                function onchange_academic_term_year(){
+                                var year = document.getElementById("batch_on_year");
+                                var value = year.options[year.selectedIndex].value;
+                                $.ajax({url: "/terms/enroll/ajax/work",
+                                data: {'academic_year':value},
+                                success: function(result){
+                                var new_result = JSON.parse(result);
+                                var terms_new = new_result['terms']
+                                var terms_list = new_result['terms']
+                                var selectList = document.getElementById("batch_on_semester");
+                                selectList.options.length = 0;
+                                for (var i = 0; i &lt; terms_list.length; i++) {
+                                var option = document.createElement("option");
+                                option.value = terms_list[i].id;
+                                option.text = terms_list[i].name;
+                                selectList.appendChild(option);
+                                }
+                                }
+                                });
+                                }
+                    </script>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </t>
+        </template>
+        <template id="portal_student_reenrollement_request_data">
+            <t t-call="portal.portal_layout">
+                <t t-foreach="reenrollement_request" t-as="registation_data">
+                    <t t-set="o_portal_fullwidth_alert" groups="project.group_project_user">
+                        <t t-call="portal.portal_back_in_edit_mode">
+                            <t t-set="backend_url"
+                               t-value="'/web#model=reenrollment.request&amp;id=%s&amp;view_type=form' % (registation_data.id)"/>
+                        </t>
+                    </t>
+                </t>
+                <t t-if="not reenrollement_request">
+                    <div class="alert alert-warning mt8" role="alert">
+                        There are no records.
+                    </div>
+                </t>
+                <t t-call="portal.portal_record_layout">
+                    <t t-set="card_header">
+                        <h5 class="mb-0">
+                            <t t-foreach="reenrollement_request" t-as="registation_data">
+                                <small class="text-muted">Suspension Request -</small>
+                                <span id="registration_name" t-field="registation_data.name"/>
+                            </t>
+                        </h5>
+                    </t>
+                </t>
+
+                <t t-foreach="reenrollement_request" t-as="registation_data">
+                    <div t-if="registation_data" style="background-color:white; padding: 20px 40px 20px 40px;"
+                         class="texr-center">
+
+                        <div class="mt32">
+                            <div class="row col-md-12">
+                                <div class="row col-md-6">
+                                    <div t-if="registation_data.name" class="col-md-5">
+                                        <strong>Name:</strong>
+                                    </div>
+                                    <div t-if="registation_data.name" class="col-md-7">
+                                        <span id="name" t-esc="registation_data.name"/>
+                                    </div>
+                                    <div t-if="registation_data.date" class="col-md-5">
+                                        <strong>Date:</strong>
+                                    </div>
+                                    <div t-if="registation_data.date" class="col-md-7">
+                                        <span t-esc="registation_data.date"/>
+                                    </div>
+                                    <div t-if="registation_data.student_no" class="col-md-5">
+                                        <strong>Student No:</strong>
+                                    </div>
+                                    <div t-if="registation_data.student_no" class="col-md-7">
+                                        <span t-esc="registation_data.student_no"/>
+                                    </div>
+                                </div>
+                                <div class="row col-md-6">
+                                    <div t-if="registation_data.student_id" class="col-md-5">
+                                        <strong>Student:</strong>
+                                    </div>
+                                    <div t-if="registation_data.student_id" class="col-md-7">
+                                        <span t-esc="registation_data.student_id.name"/>
+                                    </div>
+                                    <div t-if="registation_data.academic_year" class="col-md-5">
+                                        <strong>Academic Year:</strong>
+                                    </div>
+                                    <div t-if="registation_data.academic_year" class="col-md-7">
+                                        <span t-esc="registation_data.academic_year.name"/>
+                                    </div>
+                                    <div t-if="registation_data.semester_id" class="col-md-5">
+                                        <strong>Academic Semester:</strong>
+                                    </div>
+                                    <div t-if="registation_data.semester_id" class="col-md-7">
+                                        <span t-esc="registation_data.semester_id.name"/>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

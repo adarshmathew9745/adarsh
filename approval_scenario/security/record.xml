@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="see_hierarchy_rule" model="ir.rule">
+        <field name="name">User and his subordinates</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="domain_force">['|',('user_id','=',user.id),('user_id.employee_id', 'in', [u.id for u in
+            user.employee_id.subordinate_ids])]
+        </field>
+        <field name="groups"
+               eval="[(4, ref('sales_team.group_sale_salesman')), (4, ref('sales_team.group_sale_salesman_all_leads'))]"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_create" eval="True"/>
+    </record>
+
+    <record id="see_administrator" model="ir.rule">
+        <field name="name">Administrator</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="domain_force">[(1,'=',1)]</field>
+        <field name="groups"
+               eval="[(4, ref('sales_team.group_sale_manager'))]"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_create" eval="True"/>
+    </record>
+</odoo>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="new_portal_menu" name="odx Portal menu : Core Details"
+              inherit_id="openeducat_web.new_portal_menu"
+              priority="11">
+        <xpath expr="//div/t/a[hasclass('dashboard_element_main_body')]/t" position="before">
+            <t t-if="'Reenrollement' in menu.name">
+                <div class="col-lg-12 text-right">
+                    <span class="badge badge-secondary badge-pill" t-esc="Reenrollement"/>
+                </div>
+            </t>
+            <t t-if="'Subject Deletion' in menu.name">
+                <div class="col-lg-12 text-right">
+                    <span class="badge badge-secondary badge-pill" t-esc="Subject_Deletion"/>
+                </div>
+            </t>
+            <t t-if="'Drop Absence' in menu.name">
+                <div class="col-lg-12 text-right">
+                    <span class="badge badge-secondary badge-pill" t-esc="Drop_Absence"/>
+                </div>
+            </t>
+            <t t-if="'Suspension Request' in menu.name">
+                <div class="col-lg-12 text-right">
+                    <span class="badge badge-secondary badge-pill" t-esc="Reenrollement"/>
+                </div>
+            </t>
+            <t t-if="'Retraction Request' in menu.name">
+                <div class="col-lg-12 text-right">
+                    <span class="badge badge-secondary badge-pill" t-esc="Subject_Deletion"/>
+                </div>
+            </t>
+            <t t-if="'Service Request' in menu.name">
+                <div class="col-lg-12 text-right">
+                    <span class="badge badge-secondary badge-pill" t-esc="Drop_Absence"/>
+                </div>
+            </t>
+            <t t-if="'Case Request' in menu.name">
+                <div class="col-lg-12 text-right">
+                    <span class="badge badge-secondary badge-pill" t-esc="Drop_Absence"/>
+                </div>
+            </t>
+            <t t-if="'Mark Review Request' in menu.name">
+                <div class="col-lg-12 text-right">
+                    <span class="badge badge-secondary badge-pill" t-esc="Drop_Absence"/>
+                </div>
+            </t>
+        </xpath>
+    </template>
+</odoo>

@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_approval_wizard,access.approval.wizard,model_approval_wizard,,1,1,1,1
+access_reject_wizard,access.reject.wizard,model_reject_wizard,,1,1,1,1
+access_approve_wizard,access.approve.wizard,model_approve_wizard,,1,1,1,1

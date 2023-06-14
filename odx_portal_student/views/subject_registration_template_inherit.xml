@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_inherit_subject_registration_form" name="Subject Registration"
+              inherit_id="openeducat_core_enterprise.openeducat_create_subject_registration" priority="10">
+        <xpath expr="//div" position="before">
+            <div class="row col-md-12" style="margin-left: 25px;">
+                <div class="col-md-1">
+                    <lable>Name:</lable>
+                </div>
+                <div class="col-md-3" style="margin-left: 65px;">
+                    <input readonly="1" type="text" name="stdname" t-attf-class="form-control"
+                           t-att-value="student_id.name"/>
+                </div>
+                <div class="col-md-2" style="margin-left: 45px">
+                    <lable>Date:</lable>
+                </div>
+                <div class="col-md-2" style="margin-left: 55px;">
+                    <input id="datePicker" readonly="1" type="date" name="created_date"
+                           t-attf-class="form-control"/>
+                </div>
+                <script>
+                    document.getElementById('datePicker').valueAsDate = new Date();
+                </script>
+            </div>
+
+            <div class="row col-md-12 mt8" style="margin-left: 25px;">
+                <div class="col-md-1 mt8">
+                    <lable>Exceed Maximum:</lable>
+                </div>
+                <div class="col-md-3" style="margin-left: 65px;">
+                    <input type="checkbox" name="check" t-attf-class="form-control" style="width: 25px;" onchange="checkbox_onchange()"
+                           id="outcheck"/>
+                </div>
+                <div class="col-md-2 mt8" style="margin-left: 45px">
+                    <lable>Event:</lable>
+                </div>
+                <div class="col-md-2 mt8" style="margin-left: 55px;">
+                    <select class="form-control" name="event" id="event_id_change" onchange="event_onchange()">
+                        <option value="">Select Event</option>
+                        <t t-foreach="events_id" t-as="event">
+                            <option t-att-value="event.id">
+                                <t t-esc="event.name"/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+            </div>
+            <script>
+                function checkbox_onchange(){
+                var checkedValue = $('#outcheck:checked').val();
+                if (checkedValue=='on'){
+                $('#check_box_exceed').prop('checked', true);
+                }
+                else{
+                $('#check_box_exceed').prop('checked', false);
+                }
+                }
+            </script>
+            <script>
+                function event_onchange(){
+                var event = document.getElementById('event_id_change').value;
+                document.getElementById('events_box').value = event;
+                }
+            </script>
+
+        </xpath>
+
+        <xpath expr="//div[hasclass('js_get_data')]//div//form//div[1]//div[2]//div[4]" position="after">
+            <input id="date_box" readonly="1" type="hidden" name="date"
+                   t-attf-class="form-control"/>
+            <script>
+                    document.getElementById('date_box').valueAsDate = new Date();
+                </script>
+            <input id="check_box_exceed" readonly="1" type="checkbox" name="exceed_the_maximum" hidden="hidden"
+                   t-attf-class="form-control"/>
+            <input id="events_box" readonly="1" type="hidden" name="events_id"
+                   t-attf-class="form-control"/>
+        </xpath>
+
+    </template>
+</odoo>

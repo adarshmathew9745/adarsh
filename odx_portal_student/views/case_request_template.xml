@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="portal_my_home_menu_case_request_form" name="Portal layout : Case Request Form"
+                  inherit_id="openeducat_core_enterprise.portal_breadcrumbs_inhetrite" priority="9">
+            <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+                <li t-if="page_name == 'case_request_form' or case_request_form "
+                    t-attf-class="breadcrumb-item #{'active ' if not case_request_form else ''}">
+                    <a t-attf-href="/student/case/request">
+                        Case Request List
+                    </a>
+                </li>
+                <li t-if="student_id and page_name == 'case_request_form'" class="breadcrumb-item active">
+                    Case Request Form
+                </li>
+            </xpath>
+        </template>
+
+        <template id="all_case_request" name="All Case Request">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Case Request</t>
+                </t>
+                <div class="mt16 mb16 text-left portal_buttons">
+                    <div>
+                        <t t-if="not user_id.sudo().is_parent">
+                            <a t-attf-href="/my/case_request/case_request-form">
+                                <button>Case Request</button>
+                            </a>
+                        </t>
+                        <t t-else="">
+                            <a t-if="gms_student_id"
+                               t-attf-href="/my/case_request/case_request-form">
+                                <button>Case Request</button>
+                            </a>
+                        </t>
+                    </div>
+                </div>
+                <t t-if="not subject_registration_ids">
+                    <div class="alert alert-warning mt8" role="alert">
+                        There are no Case Request
+                    </div>
+                </t>
+                <t t-if="grouped_tasks">
+                    <t t-if="subject_registration_ids" t-call="portal.portal_table">
+                        <t t-foreach="grouped_tasks" t-as="tasks">
+                            <thead>
+                                <tr class="active" t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                    <th>Name</th>
+                                    <th>Name/Subject</th>
+                                    <th>Description</th>
+                                    <th>Academic Term</th>
+                                    <th>Grievance Category</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-if="tasks" t-foreach="tasks"
+                                   t-as="task">
+                                    <tr>
+                                        <td>
+                                            <a
+                                                    t-attf-href="/my/case_request/selected_case_request-form/#{task.id}">
+                                                <span id="student_name" t-esc="task.name"/>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span t-esc="task.subject"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="task.description"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="task.academic_term_id.name"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="task.grievance_category_id.name"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="task.state"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </t>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+
+        <template id="portal_student_case_request_data">
+            <t t-call="portal.portal_layout">
+                <t t-foreach="case_request_id" t-as="registation_data">
+                    <t t-set="o_portal_fullwidth_alert" groups="project.group_project_user">
+                        <t t-call="portal.portal_back_in_edit_mode">
+                            <t t-set="backend_url"
+                               t-value="'/web#model=grievance&amp;id=%s&amp;view_type=form' % (registation_data.id)"/>
+                        </t>
+                    </t>
+                </t>
+                <t t-if="not case_request_id">
+                    <div class="alert alert-warning mt8" role="alert">
+                        There are no records.
+                    </div>
+                </t>
+                <t t-call="portal.portal_record_layout">
+                    <t t-set="card_header">
+                        <h5 class="mb-0">
+                            <t t-foreach="case_request_id" t-as="registation_data">
+                                <small class="text-muted">Case Request -</small>
+                                <span id="registration_name" t-field="registation_data.name"/>
+                            </t>
+                        </h5>
+                    </t>
+                </t>
+
+                <t t-foreach="case_request_id" t-as="registation_data">
+                    <div t-if="registation_data" style="background-color:white; padding: 20px 40px 20px 40px;"
+                         class="texr-center">
+
+                        <div class="mt32">
+                            <div class="row col-md-12">
+                                <div class="row col-md-6">
+                                    <div t-if="registation_data.student_id" class="col-md-5">
+                                        <strong>Student:</strong>
+                                    </div>
+                                    <div t-if="registation_data.student_id" class="col-md-7">
+                                        <span id="student_name" t-esc="registation_data.student_id.name"/>
+                                    </div>
+                                    <div t-if="registation_data.created_date" class="col-md-5">
+                                        <strong>Created Date:</strong>
+                                    </div>
+                                    <div t-if="registation_data.created_date" class="col-md-7">
+                                        <span t-esc="registation_data.created_date"/>
+                                    </div>
+                                    <div t-if="registation_data.grievance_category_id" class="col-md-5">
+                                        <strong>Grievance Category:</strong>
+                                    </div>
+                                    <div t-if="registation_data.grievance_category_id" class="col-md-7">
+                                        <span t-esc="registation_data.grievance_category_id.name"/>
+                                    </div>
+                                    <div t-if="registation_data.grievance_team_id" class="col-md-5">
+                                        <strong>Team:</strong>
+                                    </div>
+                                    <div t-if="registation_data.grievance_team_id" class="col-md-7">
+                                        <span t-esc="registation_data.grievance_team_id.name"/>
+                                    </div>
+                                    <div t-if="registation_data.course_id" class="col-md-5">
+                                        <strong>Course:</strong>
+                                    </div>
+                                    <div t-if="registation_data.course_id" class="col-md-7">
+                                        <span t-esc="registation_data.course_id.name"/>
+                                    </div>
+                                </div>
+                                <div class="row col-md-6">
+                                    <div t-if="registation_data.batch_id" class="col-md-5">
+                                        <strong>Batch:</strong>
+                                    </div>
+                                    <div t-if="registation_data.batch_id" class="col-md-7">
+                                        <span t-esc="registation_data.batch_id.name"/>
+                                    </div>
+                                    <div t-if="registation_data.student_number" class="col-md-5">
+                                        <strong>Student No:</strong>
+                                    </div>
+                                    <div t-if="registation_data.student_number" class="col-md-7">
+                                        <span t-esc="registation_data.student_number"/>
+                                    </div>
+                                    <div t-if="registation_data.academic_year_id" class="col-md-5">
+                                        <strong>Academic Year:</strong>
+                                    </div>
+                                    <div t-if="registation_data.academic_year_id" class="col-md-7">
+                                        <span t-esc="registation_data.academic_year_id.name"/>
+                                    </div>
+                                    <div t-if="registation_data.state" class="col-md-5">
+                                        <strong>Status:</strong>
+                                    </div>
+                                    <div t-if="registation_data.state" class="col-md-7">
+                                        <span t-esc="{'draft':'Draft', 'submitted':'Submitted','in_review':'In Review','action':'Action','reject':'Reject','cancel':'cancel','resolve':'Resolve','close':'Close'}[registation_data.state]"/>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+
+        <template id="case_request_form" name="case request form">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Case Request Registration Form</t>
+                </t>
+                <t t-if="not student_id">
+                    <p>There are currently no information for your account!!!</p>
+                </t>
+
+                <div t-if="student_id" style="background-color:white; padding: 20px 40px 20px 40px;"
+                     class="js_get_data">
+                    <div class="mt32">
+                        <form action="/my/case_request/case_request-form/submit" method="post" role="form"
+                              enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="row col-md-12">
+                                <div class="row col-md-6">
+                                    <input type="hidden" name="student_id" t-attf-class="form-control"
+                                           t-att-value="student_id.id"/>
+                                    <div class="col-md-4 mt8">
+                                        <lable>Name :</lable>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input readonly="readonly" type="text" name="student_name"
+                                               t-attf-class="form-control" t-att-value="student_id.name"/>
+                                    </div>
+                                    <div class="col-md-4 mt16">
+                                        <lable>Course Type :</lable>
+                                    </div>
+                                    <div class="col-md-8 mt8" id="batch_on_courses">
+                                        <select class="form-control custom batches" id="course_type"
+                                                name="course_type"
+                                                required="1">
+                                            <option value="">Select Course Type</option>
+                                            <t t-foreach="course_id" t-as="course_id">
+                                                <option t-esc='course_id.name' t-att-value='course_id.id'/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row col-md-6">
+                                    <div class="col-md-4 mt16">
+                                        <lable>Student No :</lable>
+                                    </div>
+                                    <div class="col-md-8 mt8">
+                                        <input readonly="readonly" type="number" name="student_number"
+                                               t-attf-class="form-control" t-att-value="student_id.student_number"/>
+                                    </div>
+                                    <div class="col-md-4 mt16">
+                                        <lable>Batch :</lable>
+                                    </div>
+                                    <div class="col-md-8 mt8">
+                                        <select class="form-control custom batches" id="batch_id"
+                                                name="batch_id"
+                                                required="1">
+                                            <option value="">Select Batch Type</option>
+                                            <t t-foreach="batch_id" t-as="batch_id">
+                                                <option t-esc='batch_id.name' t-att-value='batch_id.id'/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row col-md-12">
+                                <div class="row col-md-6">
+                                    <input type="hidden" name="student_id" t-attf-class="form-control"
+                                           t-att-value="student_id.id"/>
+                                    <div class="col-md-4 mt8">
+                                        <lable>Academic Year :</lable>
+                                    </div>
+                                    <div class="col-md-8 mt8" id="batch_on_courses">
+                                        <select class="form-control custom batches" id="academic_year_id"
+                                                name="academic_year_id"
+                                                required="1">
+                                            <option value="">Select Academic Year</option>
+                                            <t t-foreach="academic_year_id" t-as="academic_year_id">
+                                                <option t-esc='academic_year_id.name'
+                                                        t-att-value='academic_year_id.id'/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mt16">
+                                        <lable>Academic Term :</lable>
+                                    </div>
+                                    <div class="col-md-8 mt8" id="batch_on_courses">
+                                        <select class="form-control custom batches" id="batch_on_courses"
+                                                name="academic_term_id"
+                                                required="1">
+                                            <option value="">Select Academic Year</option>
+                                            <t t-foreach="academic_term_id" t-as="academic_term_id">
+                                                <option t-esc='academic_term_id.name'
+                                                        t-att-value='academic_term_id.id'/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mt8">
+                                        <lable>Team :</lable>
+                                    </div>
+                                    <div class="col-md-8 mt8">
+                                        <select class="form-control "
+                                                name="grievance_team_id">
+                                            <t t-foreach="grievance_team_id" t-as="grievance_team_id">
+                                                <option t-att-value="grievance_team_id.id">
+                                                    <t t-esc="grievance_team_id.name"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row col-md-6">
+                                    <div class="col-md-4 mt16">
+                                        <lable>Request Date :</lable>
+                                    </div>
+                                    <div class="col-md-8 mt8">
+                                        <input id="datePicker" readonly="1" type="date" name="created_date"
+                                               t-attf-class="form-control"/>
+                                    </div>
+                                    <script>
+                                        document.getElementById('datePicker').valueAsDate = new Date();
+                                    </script>
+                                    <div class="col-md-4 mt16">
+                                        <lable>Grievance Category:</lable>
+                                    </div>
+                                    <div class="col-md-8 mt8">
+                                        <select class="form-control custom batches" id="grievance_category_id"
+                                                name="grievance_category_id"
+                                                required="1">
+                                            <option value="">Select Grievance Category</option>
+                                            <t t-foreach="grievance_category_id" t-as="grievance_category_id">
+                                                <option t-esc='grievance_category_id.name'
+                                                        t-att-value='grievance_category_id.id'/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mt16">
+                                        <lable>Student Classification :</lable>
+                                    </div>
+                                    <div class="col-md-8 mt8">
+                                        <select class="form-control custom batches" id="student_classification_id"
+                                                name="student_classification_id"
+                                                required="1">
+                                            <t t-foreach="student_id.student_classification" t-as="student_classification">
+                                                <option t-esc='student_classification.name'
+                                                        t-att-value='student_classification.id'/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt32"/>
+                            <div t-if="user_id.sudo().is_student" class="row mt8 col-md-12">
+                                <div class="col-md-2 mt8">
+                                    <lable>Description :</lable>
+                                </div>
+                                <div class="col-md-10" style="padding-left: 5px;">
+                                    <input type="text" name="description" required="required"
+                                           t-attf-class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="mt32"/>
+                            <div class="clearfix mb16 mt16 row col-md-12">
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-primary">
+                                        SUBMIT
+                                        <span class="fa fa-long-arrow-right"/>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

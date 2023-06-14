@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_home_menu_subject_registration_form" name="Portal layout : Subject Registration Form"
+              inherit_id="openeducat_core_enterprise.portal_my_home_menu_subject_registration_form" priority="10">
+        <xpath expr="//li[@t-if='student_id']" position="replace">
+                <li t-if="student_id and page_name == 'subject_reg_form'" class="breadcrumb-item active">
+                Subject Registration Form
+            </li>
+        </xpath>
+    </template>
+</odoo>

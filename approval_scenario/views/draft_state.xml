@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_order_draft" model="ir.ui.view">
+        <field name="name">sale.order.draft</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_confirm'][1]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_confirm'][2]" position="attributes">
+                <attribute name="string">Create SO</attribute>
+<!--                <attribute name="attrs">{'invisible': [('state', '!=', approved)]}</attribute>-->
+            </xpath>
+            <xpath expr="//button[@name='action_cancel']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_quotation_send'][1]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_quotation_send'][1]" position="attributes">
+                 <attribute name="attrs">{'invisible': [('button_second', '=', True)]}</attribute>
+            </xpath>
+            <header>
+                <button name="submit_for_approval" type="object" string="Submit For Approval"
+                        class=" oe_highlight"
+                        states="draft"
+                        attrs="{'invisible': [('testbool', '=', True)]}"/>
+                <button name="submit_for_approve" type="object" string="Approve"
+                        class="oe_highlight"
+                        attrs="{'invisible': ['|',('test_bool_second', '=', False),('state','=','draft')]}"/>
+                <button name="submit_for_reject" type="object" string="Reject"
+                        class="oe_highlight"
+                        attrs="{'invisible': ['|',('test_bool_second', '=', False),('state','=','draft')]}"/>
+                <button name="create_sale_order" type="object" string="Create SO"
+                        class="oe_highlight" states="approved"/>
+                <button name="set_to_draft" type="object" string="Set To Draft"
+                        states="rejected,sale"/>
+<!--                <button name="deliver_product" type="object" string="Deliver Product"-->
+<!--                        states="sale"/>-->
+            </header>
+        </field>
+    </record>
+</odoo>
+

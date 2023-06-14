@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--    <data>-->
+<!--        <record id="seq_sale_order_quo" model="ir.sequence">-->
+<!--            <field name="name">Sales Order quotation</field>-->
+<!--            <field name="code">sale.order.quotation</field>-->
+<!--            <field name="prefix">QA</field>-->
+<!--            <field name="padding">4</field>-->
+<!--            <field name="number_next">1000</field>-->
+<!--            <field name="number_increment">1</field>-->
+<!--            <field name="company_id"></field>-->
+<!--        </record>-->
+<!--    </data>-->
+<!--    <record id="view_sale_order_sequence" model="ir.ui.view">-->
+<!--        <field name="name">sale.order.inherit</field>-->
+<!--        <field name="model">sale.order</field>-->
+<!--        <field name="inherit_id" ref="sale.view_order_form"/>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <field name="name" position="replace">-->
+<!--                <field name="name" readonly="1"/>-->
+<!--            </field>-->
+<!--        </field>-->
+<!--    </record>-->
+</odoo>

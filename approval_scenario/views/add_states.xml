@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_order_inherited" model="ir.ui.view">
+        <field name="name">sale.order.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <field name="payment_term_id" position="after">
+                <field name="manager_id"/>
+            </field>
+            <field name="manager_id" position="after">
+                <field name="limit"/>
+                <field name="testbool" invisible="1"/>
+                <field name="test_bool_second" invisible="1"/>
+                <field name="button_second" invisible="1"/>
+            </field>
+            <field name="state" position="replace">
+                <field name="state" widget="statusbar" statusbar_visible="draft,pending,approved,rejected,sale"
+                       readonly="1"/>
+            </field>
+        </field>
+    </record>
+</odoo>
+

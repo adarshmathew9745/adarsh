@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="website_menu_suspension_req_portal_menu" model="openeducat.portal.menu">
+        <field name="name">Suspension Request</field>
+        <field name="menu_ref_name">Suspension Request</field>
+        <field name="link">/my/suspension_request</field>
+        <field name="active">True</field>
+        <field name="sequence" type="int">115</field>
+        <field name="background_color">#575756</field>
+        <field name="is_visible_to_parent">True</field>
+        <field name="icon_image" type="base64"
+               file="odx_portal_student/static/desicription/drop_absence.png"/>
+    </record>
+
+    <record id="website_menu_retraction_req_portal_menu" model="openeducat.portal.menu">
+        <field name="name">Retraction Request</field>
+        <field name="menu_ref_name">Retraction Request</field>
+        <field name="link">/my/retraction/request</field>
+        <field name="active">True</field>
+        <field name="sequence" type="int">115</field>
+        <field name="background_color">#575756</field>
+        <field name="is_visible_to_parent">True</field>
+        <field name="icon_image" type="base64"
+               file="odx_portal_student/static/desicription/retraction.png"/>
+    </record>
+
+    <record id="website_menu_service_req_portal_menu" model="openeducat.portal.menu">
+        <field name="name">Service Request</field>
+        <field name="menu_ref_name">Service Request</field>
+        <field name="link">/my/service/request</field>
+        <field name="active">True</field>
+        <field name="sequence" type="int">115</field>
+        <field name="background_color">#575756</field>
+        <field name="is_visible_to_parent">True</field>
+        <field name="icon_image" type="base64"
+               file="odx_portal_student/static/desicription/service.png"/>
+    </record>
+
+    <record id="website_menu_reenrollement_req_portal_menu" model="openeducat.portal.menu">
+        <field name="name">Reenrollement</field>
+        <field name="menu_ref_name">Reenrollement</field>
+        <field name="link">/my/reenrollment</field>
+        <field name="active">True</field>
+        <field name="sequence" type="int">115</field>
+        <field name="background_color">#575756</field>
+        <field name="is_visible_to_parent">True</field>
+        <field name="icon_image" type="base64"
+               file="odx_portal_student/static/desicription/reenrollement.png"/>
+    </record>
+
+    <record id="website_menu_subject_req_portal_menu" model="openeducat.portal.menu">
+        <field name="name">Subject Deletion</field>
+        <field name="menu_ref_name">Subject Deletion</field>
+        <field name="link">/subject/deletion</field>
+        <field name="active">True</field>
+        <field name="sequence" type="int">115</field>
+        <field name="background_color">#575756</field>
+        <field name="is_visible_to_parent">True</field>
+        <field name="icon_image" type="base64"
+               file="odx_portal_student/static/desicription/subject_deletion.png"/>
+    </record>
+
+    <record id="website_menu_drop_req_portal_menu" model="openeducat.portal.menu">
+        <field name="name">Drop Absence</field>
+        <field name="menu_ref_name">Drop Absence</field>
+        <field name="link">/attendance/drop</field>
+        <field name="active">True</field>
+        <field name="sequence" type="int">115</field>
+        <field name="background_color">#575756</field>
+        <field name="is_visible_to_parent">True</field>
+        <field name="icon_image" type="base64"
+               file="odx_portal_student/static/desicription/drop_absence.png"/>
+    </record>
+
+    <record id="website_menu_Case_req_portal_menu" model="openeducat.portal.menu">
+        <field name="name">Case Request</field>
+        <field name="menu_ref_name">Case Request</field>
+        <field name="link">/student/case/request</field>
+        <field name="active">True</field>
+        <field name="sequence" type="int">115</field>
+        <field name="background_color">#575756</field>
+        <field name="is_visible_to_parent">True</field>
+        <field name="icon_image" type="base64"
+               file="odx_portal_student/static/desicription/case_request.png"/>
+    </record>
+
+    <record id="website_menu_mark_review_req_portal_menu" model="openeducat.portal.menu">
+        <field name="name">Mark Review Request</field>
+        <field name="menu_ref_name">Mark Review Request</field>
+        <field name="link">/student/mark/review/request</field>
+        <field name="active">True</field>
+        <field name="sequence" type="int">115</field>
+        <field name="background_color">#575756</field>
+        <field name="is_visible_to_parent">True</field>
+        <field name="icon_image" type="base64"
+               file="odx_portal_student/static/desicription/mark_review.png"/>
+    </record>
+
+</odoo>

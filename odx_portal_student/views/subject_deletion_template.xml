@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="portal_my_home_menu_subject_deletion_form" name="Portal layout : Subject Deletion Form"
+                  inherit_id="openeducat_core_enterprise.portal_breadcrumbs_inhetrite" priority="9">
+            <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+                <li t-if="page_name == 'subject_deletion_form' or subject_deletion_form "
+                    t-attf-class="breadcrumb-item #{'active ' if not service_request_form else ''}">
+                    <a t-attf-href="/subject/deletion">
+                        Subject Deletion List
+                    </a>
+                </li>
+                <li t-if="student_id and page_name == 'subject_deletion_form'" class="breadcrumb-item active">
+                    Subject Deletion Form
+                </li>
+            </xpath>
+        </template>
+        <template id="subject_deletion_request" name="Subject deletion Request">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Subject deletion Request</t>
+                </t>
+                <div class="mt16 mb16 text-left portal_buttons">
+                    <div>
+                        <t t-if="not user_id.sudo().is_parent">
+                            <a t-attf-href="/subject/deletion/subject_deletion-form">
+                                <button>Subject deletion Request</button>
+                            </a>
+                        </t>
+                        <t t-else="">
+                            <a t-if="gms_student_id"
+                               t-attf-href="/subject/deletion/subject_deletion-form">
+                                <button>Subject deletion Request</button>
+                            </a>
+                        </t>
+                    </div>
+                </div>
+                <t t-if="not grouped_tasks">
+                    <div class="alert alert-warning mt8" role="alert">
+                        There are no Subject deletion Request
+                    </div>
+                </t>
+                <t t-if="grouped_tasks">
+                    <t t-if="subject_registration_ids" t-call="portal.portal_table">
+                        <t t-foreach="grouped_tasks" t-as="tasks">
+                            <thead>
+                                <tr class="active" t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                    <t t-if="groupby == 'none'">
+                                        <th>#</th>
+                                    </t>
+
+                                    <th>Student</th>
+                                    <th>Course</th>
+                                    <th>Batch</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-if="tasks" t-foreach="tasks"
+                                   t-as="task">
+                                    <tr>
+                                        <td>
+                                            <a
+                                                    t-attf-href="/my/subject/deletion/selected/form/#{task.id}">
+                                                <span id="student_name" t-esc="task.student_id.name"/>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span t-esc="task.course_id.name"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="task.batch_id.name"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="task.state"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </t>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <template id="subject_deletion_request_form" name="subject deletion request form">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Subject deletion Registration Form</t>
+                </t>
+                <t t-if="not student_id">
+                    <p>There are currently no information for your account!!!</p>
+                </t>
+
+                <div t-if="student_id" style="background-color:white; padding: 20px 40px 20px 40px;"
+                     class="js_get_data">
+                    <div class="mt32">
+                        <form action="/delete/subject/form/submit" method="post" role="form"
+                              enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="row col-md-12">
+                                <div class="row col-md-6">
+                                    <input type="hidden" name="student_id" t-attf-class="form-control"
+                                           t-att-value="student_id.id"/>
+                                    <div class="col-md-4 mt8">
+                                        <lable>Student:</lable>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" name="student" t-attf-class="form-control"
+                                               t-att-value="student_id.name" readonly="readonly"/>
+                                    </div>
+                                    <div class="col-md-4 mt16">
+                                        <lable>Batch:</lable>
+                                    </div>
+                                    <div class="col-md-8 mt8" id="batch_on_courses">
+                                        <select class="form-control custom batches" id="batch_onchange" onchange="onchange_batch_course()"
+                                                name="batch"
+                                                required="1">
+                                            <option value="">Select Batch</option>
+                                            <t t-foreach="batches" t-as="batch">
+                                                <option t-esc='batch.name' t-att-value='batch.id'/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row col-md-6">
+                                    <div class="col-md-6 mt8">
+                                        <lable>Course:</lable>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <select class="form-control custom batches" id="course_onchange" onchange="onchange_batch_course()"
+                                                name="course"
+                                                required="1">
+                                            <option value="">Select Course</option>
+                                            <t t-foreach="courses" t-as="c">
+                                                <option t-esc='c.name' t-att-value='c.id'/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mt16">
+                                        <lable>Date:</lable>
+                                    </div>
+                                    <div class="col-md-6 mt8">
+                                        <input id="datePicker" readonly="1" type="date" name="date"
+                                               t-attf-class="form-control"/>
+                                    </div>
+                                    <script>
+                                        document.getElementById('datePicker').valueAsDate = new Date();
+                                    </script>
+                                </div>
+                            </div>
+
+                            <div class="row col-md-12">
+                                <div class="row col-md-6">
+                                    <input type="hidden" name="student_id" t-attf-class="form-control"
+                                           t-att-value="student_id.id"/>
+                                    <div class="col-md-4 mt8">
+                                        <lable>Event:</lable>
+                                    </div>
+                                    <div class="col-md-8 mt8" id="batch_on_events">
+                                        <select class="form-control custom batches" id="events"
+                                                name="event"
+                                                required="1">
+                                            <option value="">Select Events</option>
+                                            <t t-foreach="events" t-as="e">
+                                                <option t-esc='e.name' t-att-value='e.id'/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row col-md-6">
+                                    <div class="col-md-6 mt8">
+                                        <lable>Academic Year:</lable>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <select class="form-control custom batches" id="events"
+                                                name="year"
+                                                required="1">
+                                            <option value="">Select Year</option>
+                                            <t t-foreach="year" t-as="y">
+                                                <option t-esc='y.name' t-att-value='y.id'/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row col-md-12">
+                                <div class="row col-md-6">
+                                    <input type="hidden" name="student_id" t-attf-class="form-control"
+                                           t-att-value="student_id.id"/>
+                                    <div class="col-md-4 mt16">
+                                        <lable>Academic Semester:</lable>
+                                    </div>
+                                    <div class="col-md-8 mt8" id="batch_on_courses">
+                                        <select class="form-control custom batches" id="events"
+                                                name="semester"
+                                                required="1">
+                                            <option value="">Select Semester</option>
+                                            <t t-foreach="semester" t-as="s">
+                                                <option t-esc='s.name' t-att-value='s.id'/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row col-md-6">
+                                    <div class="col-md-6 mt8">
+                                        <lable>Refund Details:</lable>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <select class="form-control custom batches" id="refunds"
+                                                name="refund"
+                                                required="1">
+                                            <option value="">Select Events</option>
+                                            <t t-foreach="refund" t-as="r">
+                                                <option t-esc='r.name' t-att-value='r.id'/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mt8">
+                            <div class="col-md-4 mt8">
+                                <h5>Subject to be Deleted:</h5>
+                            </div>
+                            <div class="col-md-12" style="padding-left: 5px;">
+                                <select class="form-control js-example-basic-multiple select2"
+                                        name="subject_delete_list" multiple="true" id="subject_delete">
+                                    <t t-foreach="subject_del" t-as="sub">
+                                        <option t-att-value="sub.id">
+                                            <t t-esc="sub.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </div>
+                            </div>
+                            <div class="row col-md-12">
+                                <div class="row col-md-6">
+                                    <input type="hidden" name="student_id" t-attf-class="form-control"
+                                           t-att-value="student_id.id"/>
+                                    <div class="col-md-4 mt8">
+                                        <lable>Add after delete:</lable>
+                                    </div>
+                                    <div class="col-md-2 mt8" id="batch_on_courses">
+                                        <input id="deletion_checkbox" type="checkbox" name="addAfterDelCheck"
+                                               onclick="click_check()"
+                                               t-attf-class="form-control"
+                                               style="width:25px;"/>
+                                    </div>
+                                </div>
+                                <script>
+                                    function click_check() {
+                                    // Get the checkbox
+                                    var checkBox = document.getElementById("deletion_checkbox");
+                                    // Get the output text
+                                    var div = document.getElementsByClassName("check-box-true")[0];
+
+                                    // If the checkbox is checked, display the output text
+                                    if (checkBox.checked == true){
+                                    div.style.display = "block";
+                                    } else {
+                                    div.style.display = "none";
+                                    }
+                                    }
+                                </script>
+                                <div class="row col-md-6">
+
+                                </div>
+                            </div>
+                            <div class="check-box-true" style="display:none;">
+                                <input type="hidden" name="student_id" t-attf-class="form-control"
+                                       t-att-value="student_id.id"/>
+
+                                <div class="row col-md-12">
+                                    <div class="row mt8 col-md-12">
+                                        <div class="col-md-4 mt8"></div>
+                                        <div class="col-md-4 mt8">
+                                            <h2>Added Subjects</h2>
+                                        </div>
+                                        <div class="col-md-4 mt8"></div>
+                                    </div>
+                                    <div class="row mt8 col-md-12">
+                                        <div class="col-md-6 mt8">
+                                            <h3>Subject</h3>
+                                            <div style="margin-top:15px;">
+                                                <input type="hidden" id="subject_id_list" name="subject_id_list"
+                                                       t-attf-class="form-control"/>
+                                                <p id="show_subject_id"></p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mt8">
+                                            <h3>Session</h3>
+                                            <div style="margin-top:15px;">
+                                                <input type="hidden" id="session_id_list" name="session_id_list"
+                                                       t-attf-class="form-control"/>
+                                                <p id="show_session_id"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt8 col-md-12">
+                                    <div class="col-md-6 mt8">
+                                        <select class="form-control"
+                                                name="subject_id" id="onchange_subject_id">
+                                            <option value="">Select Subject</option>
+                                            <t t-foreach="subject_id" t-as="subject">
+                                                <option t-att-value="subject.id">
+                                                    <t t-esc="subject.name"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mt8">
+                                        <select class="form-control"
+                                                name="session_id" id="onchange_session_id">
+                                            <option value="">Select Session</option>
+                                            <t t-foreach="session_id" t-as="session">
+                                                <option t-att-value="session.id">
+                                                    <t t-esc="session.name"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt8 col-md-12">
+                                    <div class="col-md-4 mt8"></div>
+                                    <div class="col-md-1 mt8"></div>
+                                    <div class="col-md-2 mt8">
+                                        <button style="font-size: 13px;" type="button" onclick="addSubjects()"
+                                                class="btn btn-primary">Add Subjects
+                                        </button>
+                                    </div>
+                                    <div class="col-md-4 mt8"></div>
+                                    <div class="col-md-1 mt8"></div>
+                                </div>
+                                <script>
+                                    function onchange_batch_course(){
+                                    var batch_doc = document.getElementById("batch_onchange");
+                                    var course_doc = document.getElementById("course_onchange");
+                                    var course_id = batch_doc.options[batch_doc.selectedIndex].value;
+                                    var batch_id = course_doc.options[course_doc.selectedIndex].value;
+
+                                    if (course_id!='' &amp;&amp; batch_id!=''){
+                                    $.ajax({url: "/onchange/batch/coures/subject/deletion",
+                                    data: {'course_id':course_id,'batch_id':batch_id},
+                                    success: function(result){
+                                    var new_result = JSON.parse(result);
+                                    var sub_result = new_result['subject']
+                                    var selectList = document.getElementById("subject_delete");
+                                    selectList.options.length = 0;
+                                    for (var i = 0; i &lt; sub_result.length; i++) {
+                                    var option = document.createElement("option");
+                                    option.value = sub_result[i].id;
+                                    option.text = sub_result[i].name;
+                                    selectList.appendChild(option);
+                                    }
+                                    }
+                                    });
+                                    }
+                                    }
+                                </script>
+                                <script>
+
+                                    function addSubjects() {
+                                    var subjectName = document.getElementById("onchange_subject_id");
+                                    var sessionName = document.getElementById("onchange_session_id");
+
+                                    var sname=subjectName.options[subjectName.selectedIndex].text
+                                    var Sessname=sessionName.options[sessionName.selectedIndex].text
+
+                                    if((sname !='Select Subject'))
+                                    {
+                                    if(Sessname != 'Select Session'){
+                                    var subject=document.getElementById("onchange_subject_id").value;
+                                    var session=document.getElementById("onchange_session_id").value;
+
+
+                                    document.getElementById("subject_id_list").value += subject+',';
+                                    document.getElementById("session_id_list").value += session+',';
+
+                                    $("#show_subject_id").append("<b>"+subjectName.options[subjectName.selectedIndex].text+"</b><br/>");
+                                    $("#show_session_id").append("<b>"+sessionName.options[sessionName.selectedIndex].text+"</b><br/>");
+
+                                    document.getElementById("onchange_subject_id").value=''
+                                    document.getElementById("onchange_session_id").value=''
+
+                                    }
+                                    else{
+                                    alert('Please Fill Subject and Session Properly')
+                                    }
+                                    }
+                                    else{
+                                    alert('Please Fill Subject and Session Properly')
+                                    }
+                                    }
+                                </script>
+                            </div>
+
+
+                            <div class="mt32"/>
+                            <div class="clearfix mb16 mt16 row col-md-12">
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-primary">
+                                        SUBMIT
+                                        <span class="fa fa-long-arrow-right"/>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </t>
+        </template>
+        <template id="portal_student_subject_delete_request_data">
+            <t t-call="portal.portal_layout">
+                <t t-foreach="absence_request" t-as="registation_data">
+                    <t t-set="o_portal_fullwidth_alert" groups="project.group_project_user">
+                        <t t-call="portal.portal_back_in_edit_mode">
+                            <t t-set="backend_url"
+                               t-value="'/web#model=subject.deletion&amp;id=%s&amp;view_type=form' % (registation_data.id)"/>
+                        </t>
+                    </t>
+                </t>
+                <t t-if="not subject_request">
+                    <div class="alert alert-warning mt8" role="alert">
+                        There are no records.
+                    </div>
+                </t>
+                <t t-call="portal.portal_record_layout">
+                    <t t-set="card_header">
+                        <h5 class="mb-0">
+                            <t t-foreach="subject_request" t-as="registation_data">
+                                <small class="text-muted">Suspension Request -</small>
+                                <span id="registration_name" t-field="registation_data.name"/>
+                            </t>
+                        </h5>
+                    </t>
+                </t>
+
+                <t t-foreach="subject_request" t-as="registation_data">
+                    <div t-if="registation_data" style="background-color:white; padding: 20px 40px 20px 40px;"
+                         class="texr-center">
+
+                        <div class="mt32">
+                            <div class="row col-md-12">
+                                <div class="row col-md-6">
+                                    <div t-if="registation_data.name" class="col-md-5">
+                                        <strong>Name:</strong>
+                                    </div>
+                                    <div t-if="registation_data.name" class="col-md-7">
+                                        <span id="name" t-esc="registation_data.name"/>
+                                    </div>
+                                    <div t-if="registation_data.student_id" class="col-md-5">
+                                        <strong>Student:</strong>
+                                    </div>
+                                    <div t-if="registation_data.student_id" class="col-md-7">
+                                        <span t-esc="registation_data.student_id.name"/>
+                                    </div>
+                                </div>
+                                <div class="row col-md-6">
+                                    <div t-if="registation_data.date" class="col-md-5">
+                                        <strong>Date:</strong>
+                                    </div>
+                                    <div t-if="registation_data.date" class="col-md-7">
+                                        <span t-esc="registation_data.date"/>
+                                    </div>
+                                    <div t-if="registation_data.course_id" class="col-md-5">
+                                        <strong>Student:</strong>
+                                    </div>
+                                    <div t-if="registation_data.course_id" class="col-md-7">
+                                        <span t-esc="registation_data.course_id.name"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+
+    </data>
+</odoo>

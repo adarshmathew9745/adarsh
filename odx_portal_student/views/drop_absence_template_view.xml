@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="portal_my_home_menu_drop_absence_form" name="Portal layout : Drop Absence Request Form"
+                  inherit_id="openeducat_core_enterprise.portal_breadcrumbs_inhetrite" priority="9">
+            <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+                <li t-if="page_name == 'drop_absence_request_form' or drop_absence_request_form "
+                    t-attf-class="breadcrumb-item #{'active ' if not service_request_form else ''}">
+                    <a t-attf-href="/attendance/drop">
+                        Drop Absence Request List
+                    </a>
+                </li>
+                <li t-if="student_id and page_name == 'drop_absence_request_form'" class="breadcrumb-item active">
+                    Drop Absence Request Form
+                </li>
+            </xpath>
+        </template>
+        <template id="absence_drop_request" name="Absence Drop Request">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Drop Absence Request</t>
+                </t>
+                <div class="mt16 mb16 text-left portal_buttons">
+                    <div>
+                        <t t-if="not user_id.sudo().is_parent">
+                            <a t-attf-href="/attendance/drop/absence_drop_form">
+                                <button>Drop Absence Request</button>
+                            </a>
+                        </t>
+                        <t t-else="">
+                            <a t-if="gms_student_id"
+                               t-attf-href="/attendance/drop/absence_drop_form">
+                                <button>Drop Absence Request</button>
+                            </a>
+                        </t>
+                    </div>
+                </div>
+                <t t-if="not grouped_tasks">
+                    <div class="alert alert-warning mt8" role="alert">
+                        There are no Drop Absence Request
+                    </div>
+                </t>
+                <t t-if="grouped_tasks">
+                    <t t-if="subject_registration_ids" t-call="portal.portal_table">
+                        <t t-foreach="grouped_tasks" t-as="tasks">
+                            <thead>
+                                <tr class="active" t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                    <t t-if="groupby == 'none'">
+                                        <th>#</th>
+                                    </t>
+
+                                    <th>Name</th>
+                                    <th>Date</th>
+                                    <th>Student</th>
+                                    <th>Course</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-if="tasks" t-foreach="tasks"
+                                   t-as="task">
+                                    <tr>
+                                        <td>
+                                            <a
+                                                    t-attf-href="/my/drop/absence/selected/form/#{task.id}">
+                                                <span id="name" t-esc="task.name"/>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span t-esc="task.date"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="task.student_id.name"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="task.course_id.name"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="task.state"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </t>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <template id="absence_drop_form" name="Absence drop form">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Drop Absence Registration Form</t>
+                </t>
+                <t t-if="not student_id">
+                    <p>There are currently no information for your account!!!</p>
+                </t>
+
+                <div t-if="student_id" style="background-color:white; padding: 20px 40px 20px 40px;"
+                     class="js_get_data">
+                    <div class="mt32">
+                        <form action="/drop_absence/submit" method="post" role="form"
+                              enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="row col-md-12">
+                                <div class="row col-md-6">
+                                    <input type="hidden" name="student_id" t-attf-class="form-control"
+                                           t-att-value="student_id.id"/>
+                                    <div class="col-md-4 mt8">
+                                        <lable>Name:</lable>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" name="name" t-attf-class="form-control" value="Request"
+                                               readonly="readonly"/>
+                                    </div>
+                                    <div class="col-md-4 mt16">
+                                        <lable>student:</lable>
+                                    </div>
+                                    <div class="col-md-8 mt8" id="batch_on_courses">
+                                        <input type="text" name="student" t-attf-class="form-control"
+                                               t-att-value="student_id.name" readonly="readonly"/>
+                                    </div>
+                                </div>
+                                <div class="row col-md-6">
+                                    <div class="col-md-6 mt8">
+                                        <lable>Date:</lable>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input id="datePicker" readonly="1" type="date" name="date"
+                                               t-attf-class="form-control"/>
+                                    </div>
+                                    <script>
+                                        document.getElementById('datePicker').valueAsDate = new Date();
+                                    </script>
+                                    <div class="col-md-6 mt16">
+                                        <lable>Course:</lable>
+                                    </div>
+                                    <div class="col-md-6 mt8">
+                                        <select class="form-control custom batches" id="course_drop"
+                                                name="course"
+                                                required="1" onchange="onchange_drop_absence_course()">
+                                            <option value="">Select Course</option>
+                                            <t t-foreach="course" t-as="c">
+                                                <option t-esc='c.name' t-att-value='c.id'/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt32"/>
+                            <div t-if="user_id.sudo().is_student" class="row mt8 col-md-12">
+                                <div class="row mt8 col-md-12">
+                                    <div class="col-md-4 mt8"></div>
+                                    <div class="col-md-4 mt8">
+                                        <h2>Subjects</h2>
+                                    </div>
+                                    <div class="col-md-4 mt8"></div>
+                                </div>
+                                <div class="row mt8 col-md-12">
+                                    <div class="col-md-3 mt8">
+
+                                        <h3>Subject</h3>
+                                        <div style="margin-top:15px;">
+                                            <input type="hidden" id="subject_id_list" name="subject_id_list"
+                                                   t-attf-class="form-control"/>
+                                            <p id="show_subject_id"></p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mt8">
+                                        <h3 style="padding-left:10px;">Percentage</h3>
+                                    </div>
+                                    <div class="col-md-3 mt8">
+                                        <h3 style="padding-left:20px;">Reason</h3>
+                                    </div>
+                                    <div class="col-md-3 mt8">
+                                        <h3 style="padding-left:20px;">Document</h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mt8">
+                                    <p id="onchange_subject_id"/>
+                                </div>
+                                <div class="col-md-3 mt8">
+                                    <p id="percentage"/>
+                                </div>
+                                <div class="col-md-3 mt8">
+                                    <p id="reason"/>
+                                </div>
+                                <div class="col-md-3 mt8">
+                                    <p id="document"/>
+                                </div>
+                            </div>
+                            <script>
+                                function onchange_drop_absence_course(){
+                                $(".appending_subjectlines").remove();
+                                var drop_course = document.getElementById("course_drop");
+                                var value = drop_course.options[drop_course.selectedIndex].value;
+                                $.ajax({url: "/drop/course/ajax/work",
+                                data: {'drop_course':value},
+                                success: function(results){
+                                var new_result = JSON.parse(results);
+                                var subject_list = new_result['subjects']
+                                document.getElementById('subject_id_list').value=subject_list.length
+                                for (var i = 0; i &lt; subject_list.length; i++) {
+                                $('#onchange_subject_id').after('<select class="form-control appending_subjectlines subjectline" id="subjectlines"></select>')
+                                $('#percentage').after('<input type="number" class="form-control appending_subjectlines percentageline"/>')
+                                $('#reason').after('<input type="text" placeholder="enter the reason" class="form-control appending_subjectlines reasonline"/>')
+                                $('#document').after('<input type="file" class="form-control appending_subjectlines documentline"/> ')
+                                var selectList = document.getElementById("subjectlines");
+                                selectList.options.length = 0;
+                                var option = document.createElement("option");
+                                option.value = subject_list[i].id;
+                                option.text = subject_list[i].subject_id;
+                                selectList.appendChild(option);
+                                }
+                                for (var i = 0; i &lt; subject_list.length; i++) {
+                                document.getElementsByClassName("subjectline")[i].setAttribute("name", "onchange_subject_id"+i+"");
+                                document.getElementsByClassName("percentageline")[i].setAttribute("name", "percentage"+i+"");
+                                document.getElementsByClassName("reasonline")[i].setAttribute("name", "reason"+i+"");
+                                document.getElementsByClassName("documentline")[i].setAttribute("name", "document"+i+"");
+                                }
+                                }
+                                });
+                                }
+                            </script>
+
+                            <div class="col-md-12" style="padding-left: 5px;">
+                            </div>
+                            <div class="mt32"/>
+                            <div class="clearfix mb16 mt16 row col-md-12">
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-primary">
+                                        SUBMIT
+                                        <span class="fa fa-long-arrow-right"/>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </t>
+        </template>
+        <template id="portal_student_drop_absence_request_data">
+            <t t-call="portal.portal_layout">
+                <t t-foreach="absence_request" t-as="registation_data">
+                    <t t-set="o_portal_fullwidth_alert" groups="project.group_project_user">
+                        <t t-call="portal.portal_back_in_edit_mode">
+                            <t t-set="backend_url"
+                               t-value="'/web#model=drop.absence&amp;id=%s&amp;view_type=form' % (registation_data.id)"/>
+                        </t>
+                    </t>
+                </t>
+                <t t-if="not absence_request">
+                    <div class="alert alert-warning mt8" role="alert">
+                        There are no records.
+                    </div>
+                </t>
+                <t t-call="portal.portal_record_layout">
+                    <t t-set="card_header">
+                        <h5 class="mb-0">
+                            <t t-foreach="absence_request" t-as="registation_data">
+                                <small class="text-muted">Suspension Request -</small>
+                                <span id="registration_name" t-field="registation_data.name"/>
+                            </t>
+                        </h5>
+                    </t>
+                </t>
+
+                <t t-foreach="absence_request" t-as="registation_data">
+                    <div t-if="registation_data" style="background-color:white; padding: 20px 40px 20px 40px;"
+                         class="texr-center">
+
+                        <div class="mt32">
+                            <div class="row col-md-12">
+                                <div class="row col-md-6">
+                                    <div t-if="registation_data.name" class="col-md-5">
+                                        <strong>Name:</strong>
+                                    </div>
+                                    <div t-if="registation_data.name" class="col-md-7">
+                                        <span id="name" t-esc="registation_data.name"/>
+                                    </div>
+                                    <div t-if="registation_data.student_id" class="col-md-5">
+                                        <strong>Student:</strong>
+                                    </div>
+                                    <div t-if="registation_data.student_id" class="col-md-7">
+                                        <span t-esc="registation_data.student_id.name"/>
+                                    </div>
+                                </div>
+                                <div class="row col-md-6">
+                                    <div t-if="registation_data.date" class="col-md-5">
+                                        <strong>Date:</strong>
+                                    </div>
+                                    <div t-if="registation_data.date" class="col-md-7">
+                                        <span t-esc="registation_data.date"/>
+                                    </div>
+                                    <div t-if="registation_data.course_id" class="col-md-5">
+                                        <strong>Student:</strong>
+                                    </div>
+                                    <div t-if="registation_data.course_id" class="col-md-7">
+                                        <span t-esc="registation_data.course_id.name"/>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

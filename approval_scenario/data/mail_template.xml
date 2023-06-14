@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data noupdate="1">
+        <record id="approval_request_to_manager" model="mail.template">
+            <field name="name">Approval Request</field>
+            <field name="email_from">{{object.user_id.employee_id.work_email}}</field>
+            <field name="email_to">{{object.user_id.employee_id.parent_id.work_email}}</field>
+            <field name="subject">Approval Request</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear,</p>
+                    <p>Approval request for New Quotation.
+                        <br/>
+                        <p>Name:
+                            <t t-out="object.name"/>
+                        </p>
+                        <br/>
+                        <div style="margin: 16px 0px 16px 0px;">
+                            <a t-att-href="object.quotation_link"
+                               style="background-color: #875A7B; padding: 8px 32px 8px 32px; text-decoration: none; color: #fff; border-radius: 5px; font-size:13px;">
+                                New Quotation
+                            </a>
+                        </div>
+                        <br/>
+                    </p>
+                    <p>Best regards,</p>
+                    <p>Odoo</p>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

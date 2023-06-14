@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="inherit_sale_order_quotation" inherit_id="sale.report_saleorder_document">
+        <!--        <xpath expr="//div[@t-field='doc.partner_id']" position="after">-->
+        <!--            <div>-->
+        <!--                <strong>Manager-->
+        <!--                    <p class="m-0" t-field="doc.manager_id"/>-->
+        <!--                </strong>-->
+        <!--            </div>-->
+        <!--            <div>-->
+        <!--                <strong>Approval Limit-->
+        <!--                    <p class="m-0" t-field="doc.limit"/>-->
+        <!--                </strong>-->
+        <!--            </div>-->
+        <!--        </xpath>-->
+        <!--        <xpath expr="//div[@t-field='doc.partner_id']" position="after">-->
+        <xpath expr="//div[@id='informations']" position="inside">
+            <div t-if="doc.limit" class="col-auto col-3 mw-100 mb-2">
+                <strong>Approval Limit</strong>
+                <p class="m-0" t-field="doc.limit"/>
+            </div>
+            <div t-if="doc.manager_id" class="col-auto col-3 mw-100 mb-2">
+                <strong>Manager</strong>
+                <p class="m-0" t-field="doc.manager_id"/>
+            </div>
+        </xpath>
+    </template>
+</odoo>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="portal_my_home_menu_service_request_form" name="Portal layout : Service Request Form"
+                  inherit_id="openeducat_core_enterprise.portal_breadcrumbs_inhetrite" priority="9">
+            <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+                <li t-if="page_name == 'service_request_form' or service_request_form "
+                    t-attf-class="breadcrumb-item #{'active ' if not service_request_form else ''}">
+                    <a t-attf-href="/my/service/request">
+                        Service Request List
+                    </a>
+                </li>
+                <li t-if="student_id and page_name == 'service_request_form'" class="breadcrumb-item active">
+                    Service Request Form
+                </li>
+            </xpath>
+        </template>
+
+        <template id="all_service_request" name="All Service Request">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Service Request Form</t>
+                </t>
+                <div class="mt16 mb16 text-left portal_buttons">
+                    <div>
+                        <t t-if="not user_id.sudo().is_parent">
+                            <a t-attf-href="/my/service_request/service_request-form">
+                                <button>Service Request</button>
+                            </a>
+                        </t>
+                        <t t-else="">
+                            <a t-if="gms_student_id"
+                               t-attf-href="/my/service_request/suspension_request-form">
+                                <button>Service Request</button>
+                            </a>
+                        </t>
+                    </div>
+                </div>
+                <t t-if="not grouped_tasks">
+                    <div class="alert alert-warning mt8" role="alert">
+                        There are no Service Request
+                    </div>
+                </t>
+                <t t-if="grouped_tasks">
+                    <t t-if="subject_registration_ids" t-call="portal.portal_table">
+                        <t t-foreach="grouped_tasks" t-as="tasks">
+                            <thead>
+                                <tr class="active" t-attf-class="{{'thead-light' if not groupby == 'none' else ''}}">
+                                    <th>Name</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-if="tasks" t-foreach="tasks"
+                                   t-as="task">
+                                    <tr>
+                                        <td>
+                                            <a
+                                                    t-attf-href="/my/service_request/selected_suspension_request-form/#{task.id}">
+                                                <span id="student_name" t-esc="task.student_id.name"/>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span t-esc="task.date"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="task.state"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </t>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <template id="portal_student_service_request_data">
+            <t t-call="portal.portal_layout">
+                <t t-foreach="service_request" t-as="registation_data">
+                    <t t-set="o_portal_fullwidth_alert" groups="project.group_project_user">
+                        <t t-call="portal.portal_back_in_edit_mode">
+                            <t t-set="backend_url"
+                               t-value="'/web#model=student.services&amp;id=%s&amp;view_type=form' % (registation_data.id)"/>
+                        </t>
+                    </t>
+                </t>
+                <t t-if="not service_request">
+                    <div class="alert alert-warning mt8" role="alert">
+                        There are no records.
+                    </div>
+                </t>
+                <t t-call="portal.portal_record_layout">
+                    <t t-set="card_header">
+                        <h5 class="mb-0">
+                            <t t-foreach="service_request" t-as="registation_data">
+                                <small class="text-muted">Service Request -</small>
+                                <span id="registration_name" t-field="registation_data.name"/>
+                            </t>
+                        </h5>
+                    </t>
+                </t>
+                <t t-foreach="service_request" t-as="registation_data">
+                    <div t-if="registation_data" style="background-color:white; padding: 20px 40px 20px 40px;"
+                         class="texr-center">
+
+                        <div class="mt32">
+                            <div class="row col-md-12">
+                                <div class="row col-md-6">
+                                    <div t-if="registation_data.student_id" class="col-md-5">
+                                        <strong>Student:</strong>
+                                    </div>
+                                    <div t-if="registation_data.student_id" class="col-md-7">
+                                        <span id="student_name" t-esc="registation_data.student_id.name"/>
+                                    </div>
+                                    <div t-if="registation_data.total_amount" class="col-md-5">
+                                        <strong>Total Amount:</strong>
+                                    </div>
+                                    <div t-if="registation_data.total_amount" class="col-md-7">
+                                        <span t-esc="registation_data.total_amount"/>
+                                    </div>
+                                    <div t-if="registation_data.date" class="col-md-5">
+                                        <strong>Date:</strong>
+                                    </div>
+                                    <div t-if="registation_data.date" class="col-md-7">
+                                        <span t-esc="registation_data.date"/>
+                                    </div>
+                                </div>
+                                <div class="row col-md-6">
+                                    <div t-if="registation_data.state" class="col-md-5">
+                                        <strong>Status:</strong>
+                                    </div>
+                                    <div t-if="registation_data.state" class="col-md-7">
+                                        <span t-esc="{'draft':'Draft', 'submit':'Submit'}[registation_data.state]"/>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <template id="service_request_form" name="Service Request form">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+                <t t-call="portal.portal_searchbar">
+                    <t t-set="title">Service Request Registration Form</t>
+                </t>
+                <t t-if="not student_id">
+                    <p>There are currently no information for your account!!!</p>
+                </t>
+
+                <div t-if="student_id" style="background-color:white; padding: 20px 40px 20px 40px;"
+                     class="js_get_data">
+                    <div class="mt32">
+                        <form action="/my/service_request/service_request-form/submit" method="post" role="form"
+                              enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="row col-md-12">
+                                <div class="row col-md-6">
+                                    <input type="hidden" name="student_id" t-attf-class="form-control"
+                                           t-att-value="student_id.id"/>
+                                    <div class="col-md-4 mt8">
+                                        <lable>Name :</lable>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input readonly="readonly" type="text" name="min_unit_load"
+                                               t-attf-class="form-control" t-att-value="student_id.name"/>
+                                    </div>
+                                </div>
+                                <div class="row col-md-6">
+                                    <div class="col-md-6 mt8">
+                                        <lable>Date :</lable>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input id="datePicker" readonly="1" type="date" name="date"
+                                               t-attf-class="form-control"/>
+                                    </div>
+                                    <script>
+                                        document.getElementById('datePicker').valueAsDate = new Date();
+                                    </script>
+                                </div>
+                            </div>
+                            <div class="row col-md-12">
+                                <div class="row col-md-6">
+                                    <div class="col-md-4 mt8">
+                                        <lable>Total Amount :</lable>
+                                    </div>
+                                    <div class="col-md-8 mt8">
+                                        <input readonly="readonly" type="number" name="total_amount"
+                                               t-attf-class="form-control" id="total_amount_text"/>
+                                    </div>
+                                </div>
+                                <div class="row col-md-6">
+                                </div>
+                            </div>
+                            <div class="mt32"/>
+                            <div t-if="user_id.sudo().is_student" class="row mt8 col-md-12">
+
+                                <div class="col-md-2 mt8">
+                                    <lable>Services :</lable>
+                                </div>
+                                <div class="col-md-10" style="padding-left: 5px;">
+                                    <select class="form-control js-example-basic-multiple select2"
+                                            onchange="services_onchange()"
+                                            name="requested_service" multiple="true" id="services_multiple">
+                                        <t t-foreach="requested_services" t-as="service">
+                                            <option t-att-value="service.id">
+                                                <t t-esc="service.name"/>
+                                                <span>- Amount (</span>
+                                                <t t-esc="service.product_id.list_price"/>
+                                                <span>)</span>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mt32"/>
+                            <div class="clearfix mb16 mt16 row col-md-12">
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-primary">
+                                        SUBMIT
+                                        <span class="fa fa-long-arrow-right"/>
+                                    </button>
+                                </div>
+                            </div>
+                            <script>
+                                function services_onchange(){
+                                var selectedValues = $('#services_multiple').val();
+                                var total_amount = document.getElementById('total_amount_text')
+                                $.ajax({url: "/student/service/total_amount",
+                                data: {'service_ids':JSON.stringify(selectedValues)},
+                                success: function(result){
+                                var new_result = JSON.parse(result);
+                                total_amount.value='0'
+                                total_amount.value=new_result['amount']
+                                }
+                                });
+                                }
+                            </script>
+                        </form>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>
